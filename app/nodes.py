@@ -1,3 +1,4 @@
+from app.clinicaltrials import fetch_clinical_trials
 from app.pubmed import fetch_pubmed_articles
 from app.state import BriefingState
 
@@ -9,8 +10,9 @@ def query_pubmed(state: BriefingState) -> dict:
 
 
 def query_clinicaltrials(state: BriefingState) -> dict:
-    """Retrieve trial data from ClinicalTrials.gov. Stub — implemented in Phase 3."""
-    return {}
+    """Retrieve active Phase 2–4 clinical trials from ClinicalTrials.gov for the given condition."""
+    results = fetch_clinical_trials(state["condition"])
+    return {"trial_results": results}
 
 
 def synthesize_brief(state: BriefingState) -> dict:
