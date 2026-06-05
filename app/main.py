@@ -1,10 +1,18 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.graph import briefing_graph
 from app.models import BriefRequest, BriefResponse
 from app.state import BriefingState
 
 app = FastAPI(title="Medical Condition Briefing System")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 
 @app.get("/health")

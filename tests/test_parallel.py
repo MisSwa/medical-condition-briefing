@@ -5,6 +5,13 @@ import app.nodes as nodes_module
 from app.graph import briefing_graph
 from app.state import BriefingState
 
+_FAKE_BRIEF = {
+    "standard_of_care": ["Inhaled corticosteroids"],
+    "emerging_treatments": ["Biologic therapy"],
+    "key_organizations": ["WHO"],
+    "sources": ["pmid:00000001"],
+}
+
 _INITIAL_STATE: BriefingState = {
     "condition": "asthma",
     "pubmed_results": [],
@@ -33,6 +40,7 @@ def test_parallel_thread_ids_differ(monkeypatch):
     # Patch the names as imported into nodes.py, not the source module
     monkeypatch.setattr(nodes_module, "fetch_pubmed_articles", fake_pubmed)
     monkeypatch.setattr(nodes_module, "fetch_clinical_trials", fake_clinicaltrials)
+    monkeypatch.setattr(nodes_module, "synthesize_medical_brief", lambda *_: _FAKE_BRIEF)
 
     briefing_graph.invoke(_INITIAL_STATE)
 
@@ -51,6 +59,7 @@ def test_clinicaltrials_failure_does_not_block_pubmed(monkeypatch):
 
     monkeypatch.setattr(nodes_module, "fetch_pubmed_articles", lambda _: _FAKE_ARTICLES)
     monkeypatch.setattr(nodes_module, "fetch_clinical_trials", raise_error)
+    monkeypatch.setattr(nodes_module, "synthesize_medical_brief", lambda *_: _FAKE_BRIEF)
 
     result = briefing_graph.invoke(_INITIAL_STATE)
 
