@@ -3,8 +3,10 @@ import threading
 from typing import Callable
 
 from app.clinicaltrials import fetch_clinical_trials
+from app.models import BriefResponse
 from app.pubmed import fetch_pubmed_articles
 from app.state import BriefingState
+from app.synthesize import synthesize_medical_brief
 
 logger = logging.getLogger(__name__)
 
@@ -39,10 +41,17 @@ def query_clinicaltrials(state: BriefingState) -> dict:
 
 
 def synthesize_brief(state: BriefingState) -> dict:
-    """Synthesize retrieved data into a structured brief using Claude. Stub — implemented in Phase 5."""
-    return {}
+    """Call Claude to synthesise the retrieved data into the three brief sections."""
+    result = synthesize_medical_brief(
+        state["condition"],
+        state["pubmed_results"],
+        state["trial_results"],
+    )
+    return {"brief": result}
 
 
 def format_output(state: BriefingState) -> dict:
-    """Validate and structure the final brief. Stub — implemented in Phase 5."""
-    return {}
+    """Attach condition, validate with Pydantic, and store the final brief in state."""
+    full = {**state["brief"], "condition": state["condition"]}
+    validated = BriefResponse(**full)
+    return {"brief": validated.model_dump()}
