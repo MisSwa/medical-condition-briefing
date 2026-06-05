@@ -25,6 +25,9 @@ _builder.add_edge("format_output", END)
 briefing_graph = _builder.compile()
 
 if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+
     initial_state: BriefingState = {
         "condition": "asthma",
         "pubmed_results": [],
