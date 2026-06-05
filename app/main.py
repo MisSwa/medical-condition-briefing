@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
-from app.graph import briefing_graph  # noqa: F401 — imported to catch startup errors
+from app.graph import briefing_graph
 from app.models import BriefRequest, BriefResponse
+from app.state import BriefingState
 
 app = FastAPI(title="Medical Condition Briefing System")
 
@@ -13,10 +14,17 @@ def health():
 
 @app.post("/brief", response_model=BriefResponse)
 def create_brief(request: BriefRequest) -> BriefResponse:
-    return BriefResponse(
-        condition=request.condition,
-        standard_of_care=["Stub: standard of care placeholder"],
-        emerging_treatments=["Stub: emerging treatment placeholder"],
-        key_organizations=["Stub: key organization placeholder"],
-        sources=["Stub: source placeholder"],
-    )
+    initial_state: BriefingState = {
+        "condition": request.condition,
+        "pubmed_results": [],
+        "trial_results": [],
+        "brief": {},
+    }
+    try:
+        state = briefing_graph.invoke(initial_state)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Brief generation failed: {exc}",
+        )
+    return BriefResponse(**state["brief"])
