@@ -1,9 +1,11 @@
+from app.pubmed import fetch_pubmed_articles
 from app.state import BriefingState
 
 
 def query_pubmed(state: BriefingState) -> dict:
-    """Retrieve literature from PubMed. Stub — implemented in Phase 2."""
-    return {}
+    """Retrieve peer-reviewed literature from PubMed for the given condition."""
+    results = fetch_pubmed_articles(state["condition"])
+    return {"pubmed_results": results}
 
 
 def query_clinicaltrials(state: BriefingState) -> dict:
