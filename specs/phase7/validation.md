@@ -19,7 +19,7 @@ Phase 7 is complete when all checks below pass.
 pytest -v
 ```
 
-Expected: all 10 tests pass. The CORS middleware must not break any existing test.
+Expected: 9 tests pass, 1 skipped. The skipped test (`test_synthesis.py::test_full_graph_produces_brief`) requires `ANTHROPIC_API_KEY` and is intentionally skipped in environments without it. The CORS middleware must not break any existing test.
 
 ---
 

@@ -41,7 +41,9 @@ test('generates and renders a brief for a real condition', async ({ page }) => {
   await expect(brief.getByRole('heading', { name: /key organizations/i })).toBeVisible()
   await expect(brief.getByRole('heading', { name: /sources/i })).toBeVisible()
 
-  // At least one source link must be present
+  // At least one source link must be present with an https:// href
   const sourcesList = brief.locator('.sources a')
   await expect(sourcesList.first()).toBeVisible()
+  const href = await sourcesList.first().getAttribute('href')
+  expect(href).toMatch(/^https:\/\//)
 })
